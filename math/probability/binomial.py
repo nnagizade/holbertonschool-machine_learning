@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Contains the Binomial class with PMF method
+Contains the Binomial class with CDF method
 """
 
 
@@ -23,6 +23,7 @@ class Binomial:
                 raise TypeError("data must be a list")
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
+            
             mean = sum(data) / len(data)
             sum_diff_sq = sum([(x - mean) ** 2 for x in data])
             variance = sum_diff_sq / len(data)
@@ -31,24 +32,39 @@ class Binomial:
             self.p = float(mean / self.n)
 
     def pmf(self, k):
-        """
-        Calculates the value of the PMF for a given number of 'successes'
-        """
+        """Calculates the value of the PMF for a given number of successes"""
         k = int(k)
         if k < 0 or k > self.n:
             return 0
 
-        # Helper for factorial
         def factorial(num):
             res = 1
             for i in range(1, num + 1):
                 res *= i
             return res
 
-        # nCr = n! / (k! * (n-k)!)
         n = self.n
         p = self.p
-        n_choose_k = factorial(n) / (factorial(k) * factorial(n - k))
-        
-        # PMF = nCr * p^k * (1-p)^(n-k)
-        return n_choose_k * (p ** k) * ((1 - p) ** (n - k))
+        comb = factorial(n) / (factorial(k) * factorial(n - k))
+        return comb * (p ** k) * ((1 - p) ** (n - k))
+
+    def cdf(self, k):
+        """
+        Calculates the value of the CDF for a given number of 'successes'
+        Args:
+            k: the number of successes
+        Returns:
+            The CDF value for k
+        """
+        k = int(k)
+        if k < 0:
+            return 0
+        if k >= self.n:
+            return 1.0
+
+        # Sum of PMF values from 0 to k
+        cdf_val = 0
+        for i in range(k + 1):
+            cdf_val += self.pmf(i)
+
+        return cdf_val
