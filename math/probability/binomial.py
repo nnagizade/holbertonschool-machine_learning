@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Contains the Binomial class which represents a binomial distribution
+Contains the Binomial class with PMF method
 """
 
 
@@ -10,13 +10,7 @@ class Binomial:
     """
 
     def __init__(self, data=None, n=1, p=0.5):
-        """
-        Class constructor
-        Args:
-            data: a list of the data to be used to estimate the distribution
-            n: the number of Bernoulli trials
-            p: the probability of a 'success'
-        """
+        """Initialize Binomial distribution"""
         if data is None:
             if n <= 0:
                 raise ValueError("n must be a positive value")
@@ -29,20 +23,32 @@ class Binomial:
                 raise TypeError("data must be a list")
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
-
-            # Calculate Mean and Variance
             mean = sum(data) / len(data)
             sum_diff_sq = sum([(x - mean) ** 2 for x in data])
             variance = sum_diff_sq / len(data)
-
-            # Estimate p and n
-            # Variance = n*p*(1-p), Mean = n*p
-            # Variance / Mean = 1 - p  => p = 1 - (Var / Mean)
-            estimated_p = 1 - (variance / mean)
-            
-            # Calculate n and round to nearest integer
-            estimated_n = round(mean / estimated_p)
-            
-            # Recalculate p based on the rounded n
-            self.n = int(estimated_n)
+            p_est = 1 - (variance / mean)
+            self.n = int(round(mean / p_est))
             self.p = float(mean / self.n)
+
+    def pmf(self, k):
+        """
+        Calculates the value of the PMF for a given number of 'successes'
+        """
+        k = int(k)
+        if k < 0 or k > self.n:
+            return 0
+
+        # Helper for factorial
+        def factorial(num):
+            res = 1
+            for i in range(1, num + 1):
+                res *= i
+            return res
+
+        # nCr = n! / (k! * (n-k)!)
+        n = self.n
+        p = self.p
+        n_choose_k = factorial(n) / (factorial(k) * factorial(n - k))
+        
+        # PMF = nCr * p^k * (1-p)^(n-k)
+        return n_choose_k * (p ** k) * ((1 - p) ** (n - k))
