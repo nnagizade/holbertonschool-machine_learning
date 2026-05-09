@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Contains the Exponential class which represents an exponential distribution
+Contains the Exponential class with PDF method
 """
 
 
@@ -11,10 +11,7 @@ class Exponential:
 
     def __init__(self, data=None, lambtha=1.0):
         """
-        Class constructor
-        Args:
-            data: a list of the data to be used to estimate the distribution
-            lambtha: the expected number of occurrences in a given time frame
+        Initialize Exponential distribution
         """
         if data is None:
             if lambtha <= 0:
@@ -25,8 +22,23 @@ class Exponential:
                 raise TypeError("data must be a list")
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
-
-            # Lambtha for exponential is 1 / mean(data)
-            # mean = sum(data) / len(data)
-            # lambtha = 1 / mean -> len(data) / sum(data)
             self.lambtha = float(len(data) / sum(data))
+
+    def pdf(self, x):
+        """
+        Calculates the value of the PDF for a given time period
+        Args:
+            x: the time period
+        Returns:
+            The PDF value for x
+        """
+        if x < 0:
+            return 0
+
+        e = 2.7182818285
+        lambtha = self.lambtha
+
+        # PDF Formula: lambda * e^(-lambda * x)
+        pdf_val = lambtha * (e ** (-lambtha * x))
+
+        return pdf_val
