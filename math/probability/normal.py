@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Contains the Normal class with PDF method
+Contains the Normal class with CDF method
 """
 
 
@@ -37,22 +37,30 @@ class Normal:
         return self.mean + (z * self.stddev)
 
     def pdf(self, x):
+        """Calculates the value of the PDF for a given x-value"""
+        e = 2.7182818285
+        pi = 3.1415926536
+        exponent = -0.5 * ((x - self.mean) / self.stddev) ** 2
+        coefficient = 1 / (self.stddev * ((2 * pi) ** 0.5))
+        return coefficient * (e ** exponent)
+
+    def cdf(self, x):
         """
-        Calculates the value of the PDF for a given x-value
+        Calculates the value of the CDF for a given x-value
         Args:
             x: the x-value
         Returns:
-            The PDF value for x
+            The CDF value for x
         """
-        e = 2.7182818285
+        # We use the Error Function (erf) approximation to find CDF
+        # Formula: CDF(x) = 0.5 * (1 + erf(z / sqrt(2)))
+        z = self.z_score(x)
+        val = z / (2 ** 0.5)
+
+        # Approximation of erf(x)
         pi = 3.1415926536
-        mean = self.mean
-        stddev = self.stddev
+        # Maclaurin series for erf(x): (2/sqrt(pi)) * (x - x^3/3 + x^5/10 - x^7/42 + x^9/216)
+        erf = (2 / (pi ** 0.5)) * (val - (val ** 3) / 3 + (val ** 5) / 10 -
+                                   (val ** 7) / 42 + (val ** 9) / 216)
 
-        # Breakdown of the Normal PDF formula
-        exponent = -0.5 * ((x - mean) / stddev) ** 2
-        coefficient = 1 / (stddev * ((2 * pi) ** 0.5))
-
-        pdf_val = coefficient * (e ** exponent)
-
-        return pdf_val
+        return 0.5 * (1 + erf)
