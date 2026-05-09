@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Contains the Normal class with z-score and x-value methods
+Contains the Normal class with PDF method
 """
 
 
@@ -29,23 +29,30 @@ class Normal:
             self.stddev = float((sum_diff_sq / len(data)) ** 0.5)
 
     def z_score(self, x):
-        """
-        Calculates the z-score of a given x-value
-        Args:
-            x: the value to be converted
-        Returns:
-            The z-score of x
-        """
-        # Formula: z = (x - mean) / stddev
+        """Calculates the z-score of a given x-value"""
         return (x - self.mean) / self.stddev
 
     def x_value(self, z):
-        """
-        Calculates the x-value of a given z-score
-        Args:
-            z: the z-score to be converted
-        Returns:
-            The x-value of z
-        """
-        # Formula derived from z-score: x = mean + (z * stddev)
+        """Calculates the x-value of a given z-score"""
         return self.mean + (z * self.stddev)
+
+    def pdf(self, x):
+        """
+        Calculates the value of the PDF for a given x-value
+        Args:
+            x: the x-value
+        Returns:
+            The PDF value for x
+        """
+        e = 2.7182818285
+        pi = 3.1415926536
+        mean = self.mean
+        stddev = self.stddev
+
+        # Breakdown of the Normal PDF formula
+        exponent = -0.5 * ((x - mean) / stddev) ** 2
+        coefficient = 1 / (stddev * ((2 * pi) ** 0.5))
+
+        pdf_val = coefficient * (e ** exponent)
+
+        return pdf_val
