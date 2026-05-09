@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Contains the Exponential class with PDF method
+Contains the Exponential class with CDF method
 """
 
 
@@ -27,10 +27,19 @@ class Exponential:
     def pdf(self, x):
         """
         Calculates the value of the PDF for a given time period
+        """
+        if x < 0:
+            return 0
+        e = 2.7182818285
+        return self.lambtha * (e ** (-self.lambtha * x))
+
+    def cdf(self, x):
+        """
+        Calculates the value of the CDF for a given time period
         Args:
             x: the time period
         Returns:
-            The PDF value for x
+            The CDF value for x
         """
         if x < 0:
             return 0
@@ -38,7 +47,7 @@ class Exponential:
         e = 2.7182818285
         lambtha = self.lambtha
 
-        # PDF Formula: lambda * e^(-lambda * x)
-        pdf_val = lambtha * (e ** (-lambtha * x))
+        # CDF Formula: 1 - e^(-lambda * x)
+        cdf_val = 1 - (e ** (-lambtha * x))
 
-        return pdf_val
+        return cdf_val
