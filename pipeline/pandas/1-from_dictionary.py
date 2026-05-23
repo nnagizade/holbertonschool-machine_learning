@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+"""
+Creates a pd.DataFrame from a dictionary
+"""
+import pandas as pd
+
+
+# Create the dictionary with the specified values
+data = {
+    "First": [0.0, 0.5, 1.0, 1.5],
+    "Second": ["one", "two", "three", "four"]
+}
+
+# Define the row labels (index)
+row_labels = ["A", "B", "C", "D"]
+
+# Create the DataFrame
+df = pd.DataFrame(data, index=row_labels)
