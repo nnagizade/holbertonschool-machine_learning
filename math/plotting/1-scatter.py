@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+"""Module to plot a scatter plot of men's height vs weight."""
 import numpy as np
 import matplotlib.pyplot as plt
 
-def scatter():
 
+def scatter():
+    """Plots a scatter graph of randomly generated heights and weights."""
     mean = [69, 0]
     cov = [[15, 8], [8, 15]]
     np.random.seed(5)
