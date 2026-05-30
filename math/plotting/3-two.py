@@ -14,7 +14,7 @@ def two():
     y2 = np.exp((r / t2) * x)
     plt.figure(figsize=(6.4, 4.8))
 
-    plt.plot(x, y1, 'r--', label='C-14')
+    plt.plot(x, y1, 'r:', label='C-14')
     plt.plot(x, y2, 'g-', label='Ra-266')
     plt.xlabel('Time (years)')
     plt.ylabel('Fraction Remaining')
