@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
+"""Module for building an isolation random tree."""
 Node = __import__('8-build_decision_tree').Node
 Leaf = __import__('8-build_decision_tree').Leaf
 import numpy as np
 
 
 class Isolation_Random_Tree():
+    """Represents an isolation random tree."""
+
     def __init__(self, max_depth=10, seed=0, root=None):
+        """Initialize an Isolation_Random_Tree."""
         self.rng = np.random.default_rng(seed)
         if root:
             self.root = root
@@ -17,93 +21,45 @@ class Isolation_Random_Tree():
         self.min_pop = 1
 
     def __str__(self):
-        def node_to_str(node, depth=0):
-            indent = "    " * depth
-            if isinstance(node, Leaf):
-                return f"{indent}Leaf (depth={node.depth})\n"
-            s = f"{indent}Node [feature={node.feature}, threshold={node.threshold}]\n"
-            if node.left_child:
-                s += node_to_str(node.left_child, depth + 1)
-            if node.right_child:
-                s += node_to_str(node.right_child, depth + 1)
-            return s
-        return node_to_str(self.root)
+        """Return string representation of the tree."""
+        return self.root.__str__()
 
     def depth(self):
-        def node_depth(node):
-            if isinstance(node, Leaf):
-                return node.depth
-            left_depth = node_depth(node.left_child) if node.left_child else 0
-            right_depth = node_depth(node.right_child) if node.right_child else 0
-            return max(left_depth, right_depth)
-        return node_depth(self.root)
+        """Return the depth of the tree."""
+        return self.root.max_depth_below()
 
     def count_nodes(self, only_leaves=False):
-        def count(node):
-            if isinstance(node, Leaf):
-                return 1
-            left = count(node.left_child) if node.left_child else 0
-            right = count(node.right_child) if node.right_child else 0
-            if only_leaves:
-                return left + right
-            return 1 + left + right
-        return count(self.root)
+        """Return the number of nodes in the tree."""
+        return self.root.count_nodes_below(only_leaves=only_leaves)
 
     def update_bounds(self):
-        def update(node, lower, upper):
-            node.lower = lower.copy()
-            node.upper = upper.copy()
-            if isinstance(node, Leaf):
-                return
-            f = node.feature
-            t = node.threshold
-            left_upper = upper.copy()
-            left_upper[f] = t
-            right_lower = lower.copy()
-            right_lower[f] = t
-            if node.left_child:
-                update(node.left_child, lower, left_upper)
-            if node.right_child:
-                update(node.right_child, right_lower, upper)
-        n_features = self.explanatory.shape[1]
-        lower = np.full(n_features, -np.inf)
-        upper = np.full(n_features, np.inf)
-        update(self.root, lower, upper)
+        """Update bounds for all nodes."""
+        self.root.update_bounds_below()
 
     def get_leaves(self):
-        leaves = []
-        def collect(node):
-            if isinstance(node, Leaf):
-                leaves.append(node)
-                return
-            if node.left_child:
-                collect(node.left_child)
-            if node.right_child:
-                collect(node.right_child)
-        collect(self.root)
-        return leaves
+        """Return all leaves of the tree."""
+        return self.root.get_leaves_below()
 
     def update_predict(self):
+        """Compute the prediction function using leaf indicators."""
         self.update_bounds()
         leaves = self.get_leaves()
         for leaf in leaves:
-            leaf.value = leaf.depth
-
-        def predict_individual(x):
-            node = self.root
-            while not isinstance(node, Leaf):
-                if x[node.feature] > node.threshold:
-                    node = node.right_child
-                else:
-                    node = node.left_child
-            return node.value
-
-        self.predict = lambda A: np.array([predict_individual(x) for x in A])
+            leaf.update_indicator()
+        self.predict = lambda A: np.array([
+            leaves[np.argmax(
+                np.array([leaf.indicator(A) for leaf in leaves]),
+                axis=0
+            )[i]].depth
+            for i in range(A.shape[0])
+        ])
 
     def np_extrema(self, arr):
+        """Return the min and max of an array."""
         return np.min(arr), np.max(arr)
 
     def random_split_criterion(self, node):
+        """Return a random feature and threshold for splitting."""
         diff = 0
         while diff == 0:
             feature = self.rng.integers(0, self.explanatory.shape[1])
@@ -111,37 +67,40 @@ class Isolation_Random_Tree():
                 self.explanatory[:, feature][node.sub_population]
             )
             diff = feature_max - feature_min
-        threshold = self.rng.uniform(feature_min, feature_max)
+        x = self.rng.uniform()
+        threshold = (1 - x) * feature_min + x * feature_max
         return feature, threshold
 
     def get_leaf_child(self, node, sub_population):
-        leaf_child = Leaf(is_leaf=True)
+        """Create and return a leaf child node with depth as value."""
+        leaf_child = Leaf(node.depth + 1)
         leaf_child.depth = node.depth + 1
         leaf_child.subpopulation = sub_population
         return leaf_child
 
     def get_node_child(self, node, sub_population):
+        """Create and return an internal child node."""
         n = Node()
         n.depth = node.depth + 1
         n.sub_population = sub_population
         return n
 
     def fit_node(self, node):
+        """Fit a node by splitting or making it a leaf."""
         node.feature, node.threshold = self.random_split_criterion(node)
 
         left_population = (
-            node.sub_population
-            & (self.explanatory[:, node.feature] > node.threshold)
+            node.sub_population &
+            (self.explanatory[:, node.feature] > node.threshold)
         )
         right_population = (
-            node.sub_population
-            & (self.explanatory[:, node.feature] <= node.threshold)
+            node.sub_population &
+            ~(self.explanatory[:, node.feature] > node.threshold)
         )
 
-        # Is left node a leaf?
         is_left_leaf = (
-            node.depth >= self.max_depth - 1
-            or np.sum(left_population) <= self.min_pop
+            np.sum(left_population) <= self.min_pop or
+            node.depth + 1 >= self.max_depth
         )
 
         if is_left_leaf:
@@ -150,10 +109,9 @@ class Isolation_Random_Tree():
             node.left_child = self.get_node_child(node, left_population)
             self.fit_node(node.left_child)
 
-        # Is right node a leaf?
         is_right_leaf = (
-            node.depth >= self.max_depth - 1
-            or np.sum(right_population) <= self.min_pop
+            np.sum(right_population) <= self.min_pop or
+            node.depth + 1 >= self.max_depth
         )
 
         if is_right_leaf:
@@ -163,12 +121,12 @@ class Isolation_Random_Tree():
             self.fit_node(node.right_child)
 
     def fit(self, explanatory, verbose=0):
+        """Train the isolation tree on explanatory data."""
         self.split_criterion = self.random_split_criterion
         self.explanatory = explanatory
-        self.root.sub_population = np.ones_like(
+        self.root.sub_population = np.ones(
             explanatory.shape[0], dtype='bool'
         )
-        self.root.sub_population = np.ones(explanatory.shape[0], dtype='bool')
 
         self.fit_node(self.root)
         self.update_predict()
