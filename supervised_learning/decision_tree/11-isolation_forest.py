@@ -40,10 +40,13 @@ class Isolation_Random_Forest():
             nodes.append(T.count_nodes())
             leaves.append(T.count_nodes(only_leaves=True))
         if verbose == 1:
-            print(f"""  Training finished.
-    - Mean depth                        : {np.array(depths).mean()}
-    - Mean number of nodes              : {np.array(nodes).mean()}
-    - Mean number of leaves             : {np.array(leaves).mean()}""")
+            print("  Training finished.")
+            print(f"    - Mean depth                        :"
+                  f" {np.array(depths).mean()}")
+            print(f"    - Mean number of nodes              :"
+                  f" {np.array(nodes).mean()}")
+            print(f"    - Mean number of leaves             :"
+                  f" {np.array(leaves).mean()}")
 
     def suspects(self, explanatory, n_suspects):
         """Return the n_suspects rows with the smallest mean depth."""
