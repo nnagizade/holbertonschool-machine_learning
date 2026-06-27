@@ -47,13 +47,17 @@ class Random_Forest():
             leaves.append(T.count_nodes(only_leaves=True))
             accuracies.append(T.accuracy(T.explanatory, T.target))
         if verbose == 1:
-            print(f"""  Training finished.
-    - Mean depth                        : {np.array(depths).mean()}
-    - Mean number of nodes              : {np.array(nodes).mean()}
-    - Mean number of leaves             : {np.array(leaves).mean()}
-    - Mean accuracy on training data    : {np.array(accuracies).mean()}
-    - Accuracy of the forest on td      : \
-{self.accuracy(self.explanatory, self.target)}""")
+            print("  Training finished.")
+            print(f"    - Mean depth                        :"
+                  f" {np.array(depths).mean()}")
+            print(f"    - Mean number of nodes              :"
+                  f" {np.array(nodes).mean()}")
+            print(f"    - Mean number of leaves             :"
+                  f" {np.array(leaves).mean()}")
+            print(f"    - Mean accuracy on training data    :"
+                  f" {np.array(accuracies).mean()}")
+            print(f"    - Accuracy of the forest on td      :"
+                  f" {self.accuracy(self.explanatory, self.target)}")
 
     def accuracy(self, test_explanatory, test_target):
         """Return the accuracy of the forest on test data."""
