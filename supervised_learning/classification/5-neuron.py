@@ -1,92 +1,97 @@
 #!/usr/bin/env python3
-"""
-This module defines a single neuron performing binary classification
-with an evaluation feature.
-"""
+"""Defines a single neuron performing binary classification"""
 import numpy as np
 
 
 class Neuron:
-    """
-    Represents a single neuron performing binary classification.
-    """
+    """Class that defines a single neuron performing binary classification"""
+
     def __init__(self, nx):
-        """
-        Initializes the neuron with private attributes.
+        """Class constructor
 
         Args:
-            nx (int): The number of input features to the neuron.
-
-        Raises:
-            TypeError: If nx is not an integer.
-            ValueError: If nx is less than 1.
+            nx (int): number of input features to the neuron
         """
-        if not isinstance(nx, int):
+        if type(nx) is not int:
             raise TypeError("nx must be an integer")
         if nx < 1:
             raise ValueError("nx must be a positive integer")
 
-        self.__W = np.random.normal(size=(1, nx))
+        self.__W = np.random.randn(1, nx)
         self.__b = 0
         self.__A = 0
 
     @property
     def W(self):
-        """Getter for the weights vector."""
+        """Getter for the weights vector"""
         return self.__W
 
     @property
     def b(self):
-        """Getter for the bias."""
+        """Getter for the bias"""
         return self.__b
 
     @property
     def A(self):
-        """Getter for the activated output."""
+        """Getter for the activated output"""
         return self.__A
 
     def forward_prop(self, X):
-        """
-        Calculates the forward propagation of the neuron.
+        """Calculates the forward propagation of the neuron
 
         Args:
-            X (numpy.ndarray): The input data of shape (nx, m).
+            X (numpy.ndarray): shape (nx, m) that contains the input data
 
         Returns:
-            numpy.ndarray: The private attribute __A (the activated output).
+            The private attribute __A
         """
-        Z = np.dot(self.__W, X) + self.__b
+        Z = np.matmul(self.__W, X) + self.__b
         self.__A = 1 / (1 + np.exp(-Z))
         return self.__A
 
     def cost(self, Y, A):
-        """
-        Calculates the cost of the model using logistic regression.
+        """Calculates the cost of the model using logistic regression
 
         Args:
-            Y (numpy.ndarray): Correct labels for input data, shape (1, m).
-            A (numpy.ndarray): Activated outputs of the neuron, shape (1, m).
+            Y (numpy.ndarray): shape (1, m) that contains the correct labels
+            A (numpy.ndarray): shape (1, m) containing the activated output
 
         Returns:
-            float: The logistic regression cost.
+            The cost
         """
         m = Y.shape[1]
-        loss = -(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
-        cost = np.sum(loss) / m
+        cost = -(1 / m) * np.sum(
+            Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)
+        )
         return cost
 
     def evaluate(self, X, Y):
-        """
-        Evaluates the neuron's predictions.
+        """Evaluates the neuron's predictions
 
         Args:
-            X (numpy.ndarray): The input data of shape (nx, m).
-            Y (numpy.ndarray): Correct labels for input data, shape (1, m).
+            X (numpy.ndarray): shape (nx, m) that contains the input data
+            Y (numpy.ndarray): shape (1, m) that contains the correct labels
 
         Returns:
-            numpy.ndarray, float: The prediction matrix and the network cost.
+            The neuron's prediction and the cost of the network
         """
         A = self.forward_prop(X)
-        prediction = np.where(A >= 0.5, 1, 0)
         cost = self.cost(Y, A)
+        prediction = np.where(A >= 0.5, 1, 0)
         return prediction, cost
+
+    def gradient_descent(self, X, Y, A, alpha=0.05):
+        """Calculates one pass of gradient descent on the neuron
+
+        Args:
+            X (numpy.ndarray): shape (nx, m) that contains the input data
+            Y (numpy.ndarray): shape (1, m) that contains the correct labels
+            A (numpy.ndarray): shape (1, m) containing the activated output
+            alpha (float): the learning rate
+        """
+        m = Y.shape[1]
+        dZ = A - Y
+        dW = (1 / m) * np.matmul(dZ, X.T)
+        db = (1 / m) * np.sum(dZ)
+        self.__W = self.__W - alpha * dW
+        self.__b = self.__b - alpha * db
