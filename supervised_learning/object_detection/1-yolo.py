@@ -77,3 +77,24 @@ class Yolo:
 
             anchor_w = self.anchors[i, :, 0]
             anchor_h = self.anchors[i, :, 1]
+
+            input_h = self.model.input.shape[2]
+            input_w = self.model.input.shape[1]
+
+            bw = (anchor_w * np.exp(t_wh[..., 0])) / input_w
+            bh = (anchor_h * np.exp(t_wh[..., 1])) / input_h
+
+            x1 = (bx - bw / 2) * image_width
+            y1 = (by - bh / 2) * image_height
+            x2 = (bx + bw / 2) * image_width
+            y2 = (by + bh / 2) * image_height
+
+            box = np.zeros(output[..., 0:4].shape)
+            box[..., 0] = x1
+            box[..., 1] = y1
+            box[..., 2] = x2
+            box[..., 3] = y2
+
+            boxes.append(box)
+
+        return boxes, box_confidences, box_class_probs
