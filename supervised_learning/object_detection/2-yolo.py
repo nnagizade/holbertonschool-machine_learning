@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
     def filter_boxes(self, boxes, box_confidences, box_class_probs):
         """
         Filter boxes based on their objectness score and class probability.
