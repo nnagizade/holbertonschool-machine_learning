@@ -37,4 +37,4 @@ class BayesianOptimization:
         min_b, max_b = bounds
         self.X_s = np.linspace(min_b, max_b, ac_samples).reshape(-1, 1)
         self.xsi = xsi
-        self.minimize =
+        self.minimize = minimize
