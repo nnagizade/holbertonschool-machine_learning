@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Module for Bag of Words embedding matrix creation.
+Module to create a Bag of Words embedding matrix.
 """
 import numpy as np
 
@@ -11,40 +11,39 @@ def bag_of_words(sentences, vocab=None):
 
     Parameters:
     - sentences (list): List of sentences to analyze.
-    - vocab (list, optional): List of vocabulary words to use.
-      If None, all unique words across sentences are used.
+    - vocab (list, optional): List of vocabulary words to use for analysis.
+      If None, all words within sentences are used.
 
     Returns:
-    - embeddings (numpy.ndarray): Matrix of shape (s, f) containing word counts.
-    - features (list): List of features used for embeddings.
+    - embeddings (numpy.ndarray): Matrix of shape (s, f) with word counts.
+    - features (numpy.ndarray): Array of features used for embeddings.
     """
     cleaned_sentences = []
     all_words = set()
 
     for sentence in sentences:
-        # Preprocess sentence: lowercase and strip possessive "'s"
-        clean_sentence = sentence.lower().replace("'s", "")
-
-        # Extract words by filtering out punctuation
-        words = [
-            word for word in ''.join(
-                c if c.isalnum() else ' ' for c in clean_sentence
-            ).split()
-        ]
-
+        # Lowercase and remove possessive 's
+        clean_s = sentence.lower().replace("'s", "")
+        # Replace non-alphanumeric characters with spaces
+        clean_s = "".join(c if c.isalnum() else " " for c in clean_s)
+        words = clean_s.split()
+        
         cleaned_sentences.append(words)
         all_words.update(words)
 
     if vocab is None:
         features = sorted(list(all_words))
     else:
-        features = vocab
+        features = list(vocab)
+
+    # Convert features to a NumPy array for correct stdout formatting
+    features = np.array(features)
 
     s = len(sentences)
     f = len(features)
     embeddings = np.zeros((s, f), dtype=int)
 
-    # Map features to column indices for O(1) lookup
+    # Hash map for O(1) feature index lookups
     feature_map = {word: idx for idx, word in enumerate(features)}
 
     for i, words in enumerate(cleaned_sentences):
