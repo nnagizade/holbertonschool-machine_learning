@@ -37,7 +37,4 @@ def word2vec_model(sentences, vector_size=100, min_count=5, window=5,
         workers=workers
     )
 
-    model.train(sentences, total_examples=model.corpus_count,
-                epochs=model.epochs)
-
     return model
