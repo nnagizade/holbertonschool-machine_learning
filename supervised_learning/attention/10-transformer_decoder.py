@@ -8,8 +8,9 @@ DecoderBlock = __import__('8-transformer_decoder_block').DecoderBlock
 class Decoder(tf.keras.layers.Layer):
     """Creates the decoder for a transformer"""
 
-    def __init__(self, N, dm, h, hidden, target_vocab, max_seq_len,
-                 drop_rate=0.1):
+    def __init__(
+            self, N, dm, h, hidden, target_vocab, max_seq_len,
+            drop_rate=0.1):
         """
         Class constructor
 
@@ -35,8 +36,9 @@ class Decoder(tf.keras.layers.Layer):
 
         self.dropout = tf.keras.layers.Dropout(drop_rate)
 
-    def call(self, x, encoder_output, training, look_ahead_mask,
-              padding_mask):
+    def call(
+            self, x, encoder_output, training, look_ahead_mask,
+            padding_mask):
         """
         Args:
             x: tensor of shape (batch, target_seq_len, dm) containing the
@@ -62,7 +64,7 @@ class Decoder(tf.keras.layers.Layer):
         x = self.dropout(x, training=training)
 
         for i in range(self.N):
-            x = self.blocks[i](x, encoder_output, training,
-                                look_ahead_mask, padding_mask)
+            x = self.blocks[i](
+                x, encoder_output, training, look_ahead_mask, padding_mask)
 
-        return x 
+        return x
