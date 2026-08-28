@@ -1,26 +1,43 @@
 #!/usr/bin/env python3
-"""LSA module using Gensim."""
-import gensim
+"""Trains a gensim word2vec model"""
+from gensim.models import Word2Vec
 
 
-def lsa(sentences, num_topics):
-    """Calculates LSA on a given corpus of sentences."""
-    # 1. Create the dictionary from tokenized sentences
-    dictionary = gensim.corpora.Dictionary(sentences)
+def word2vec_model(sentences, vector_size=100, min_count=5, window=5,
+                    negative=5, cbow=True, epochs=5, seed=0, workers=1):
+    """Creates, builds, and trains a gensim word2vec model.
 
-    # 2. Build Bag-of-Words corpus
-    corpus = [dictionary.doc2bow(text) for text in sentences]
+    Args:
+        sentences: list of sentences to be trained on
+        vector_size: dimensionality of the embedding layer
+        min_count: minimum number of occurrences of a word for use
+                   in training
+        window: maximum distance between the current and predicted
+                word within a sentence
+        negative: size of negative sampling
+        cbow: boolean, True is for CBOW, False is for Skip-gram
+        epochs: number of iterations to train over
+        seed: seed for the random number generator
+        workers: number of worker threads to train the model
 
-    # 3. Apply TF-IDF model transformation
-    tfidf = gensim.models.TfidfModel(corpus)
-    corpus_tfidf = tfidf[corpus]
+    Returns:
+        the trained model
+    """
+    sg = 0 if cbow else 1
 
-    # 4. Train LsiModel with the TF-IDF corpus and dictionary
-    lsi_model = gensim.models.LsiModel(
-        corpus_tfidf,
-        id2word=dictionary,
-        num_topics=num_topics
+    model = Word2Vec(
+        sentences=sentences,
+        vector_size=vector_size,
+        min_count=min_count,
+        window=window,
+        negative=negative,
+        sg=sg,
+        epochs=epochs,
+        seed=seed,
+        workers=workers
     )
 
-    # 5. Return the projection matrix U
-    return lsi_model.projection.u
+    model.train(sentences, total_examples=model.corpus_count,
+                epochs=model.epochs)
+
+    return model 
