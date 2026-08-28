@@ -28,6 +28,7 @@ class RNNDecoder(tf.keras.layers.Layer):
             return_state=True,
             recurrent_initializer='glorot_uniform')
         self.F = tf.keras.layers.Dense(vocab)
+        self.attention = SelfAttention(units)
 
     def call(self, x, s_prev, hidden_states):
         """Performs the decoder's forward pass.
@@ -47,8 +48,7 @@ class RNNDecoder(tf.keras.layers.Layer):
             s: tensor of shape (batch, units), new decoder hidden
                state
         """
-        attention = SelfAttention(s_prev.shape[1])
-        context, weights = attention(s_prev, hidden_states)
+        context, weights = self.attention(s_prev, hidden_states)
 
         x = self.embedding(x)
 
