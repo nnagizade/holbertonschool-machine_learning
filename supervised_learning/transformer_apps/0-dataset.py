@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Defines the Dataset class that loads and preps a translation dataset"""
-from transformers import AutoTokenizer
+import transformers
 from setup import load_pt2en
 
 
@@ -49,13 +49,14 @@ class Dataset:
             pt_sentences.append(pt.decode('utf-8'))
             en_sentences.append(en.decode('utf-8'))
 
-        base_pt = AutoTokenizer.from_pretrained(
+        base_pt = transformers.AutoTokenizer.from_pretrained(
             'neuralmind/bert-base-portuguese-cased')
-        base_en = AutoTokenizer.from_pretrained('bert-base-uncased')
+        base_en = transformers.AutoTokenizer.from_pretrained(
+            'bert-base-uncased')
 
         tokenizer_pt = base_pt.train_new_from_iterator(
             pt_sentences, vocab_size=2 ** 13)
         tokenizer_en = base_en.train_new_from_iterator(
             en_sentences, vocab_size=2 ** 13)
 
-        return tokenizer_pt, tokenizer_en
+        return tokenizer_pt, tokenizer_en 
