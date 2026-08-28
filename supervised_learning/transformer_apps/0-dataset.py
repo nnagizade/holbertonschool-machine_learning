@@ -42,21 +42,22 @@ class Dataset:
                 tokenizer_pt: the Portuguese tokenizer
                 tokenizer_en: the English tokenizer
         """
-        pt_sentences = []
-        en_sentences = []
-
-        for pt, en in data.as_numpy_iterator():
-            pt_sentences.append(pt.decode('utf-8'))
-            en_sentences.append(en.decode('utf-8'))
-
         base_pt = transformers.AutoTokenizer.from_pretrained(
             'neuralmind/bert-base-portuguese-cased')
         base_en = transformers.AutoTokenizer.from_pretrained(
             'bert-base-uncased')
 
-        tokenizer_pt = base_pt.train_new_from_iterator(
-            pt_sentences, vocab_size=2 ** 13)
-        tokenizer_en = base_en.train_new_from_iterator(
-            en_sentences, vocab_size=2 ** 13)
+        def pt_iterator():
+            for pt, en in data.as_numpy_iterator():
+                yield pt.decode('utf-8')
 
-        return tokenizer_pt, tokenizer_en 
+        def en_iterator():
+            for pt, en in data.as_numpy_iterator():
+                yield en.decode('utf-8')
+
+        tokenizer_pt = base_pt.train_new_from_iterator(
+            pt_iterator(), vocab_size=2 ** 13)
+        tokenizer_en = base_en.train_new_from_iterator(
+            en_iterator(), vocab_size=2 ** 13)
+
+        return tokenizer_pt, tokenizer_en
