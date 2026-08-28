@@ -1,0 +1,51 @@
+Bayesian Optimization Report
+=============================
+
+Total iterations run: 35
+
+Best hyperparameters found:
+  learning_rate: 0.001561
+  filters: 16
+  dropout_rate: 0.4336
+  l2_weight: 0.000243
+  batch_size: 128
+  validation_accuracy: 0.9910
+
+Best checkpoint file: checkpoint_lr0.00156_filters16_dropout0.43_l20.00024_batch128.keras
+
+All iterations:
+1. lr=0.003911, filters=32, dropout=0.4122, l2=0.003929, batch_size=64, val_accuracy=0.9867
+2. lr=0.008813, filters=64, dropout=0.3448, l2=0.003185, batch_size=128, val_accuracy=0.9863
+3. lr=0.009536, filters=16, dropout=0.4352, l2=0.007271, batch_size=64, val_accuracy=0.9766
+4. lr=0.003852, filters=32, dropout=0.3517, l2=0.008197, batch_size=128, val_accuracy=0.9883
+5. lr=0.006324, filters=16, dropout=0.3648, l2=0.005429, batch_size=64, val_accuracy=0.9831
+6. lr=0.003852, filters=32, dropout=0.3517, l2=0.008197, batch_size=128, val_accuracy=0.9885
+7. lr=0.010000, filters=32, dropout=0.3115, l2=0.008006, batch_size=128, val_accuracy=0.9772
+8. lr=0.000558, filters=32, dropout=0.0634, l2=0.009135, batch_size=64, val_accuracy=0.9868
+9. lr=0.000436, filters=16, dropout=0.3793, l2=0.003838, batch_size=128, val_accuracy=0.9899
+10. lr=0.007050, filters=64, dropout=0.0061, l2=0.001571, batch_size=32, val_accuracy=0.9815
+11. lr=0.005982, filters=32, dropout=0.4223, l2=0.007054, batch_size=128, val_accuracy=0.9838
+12. lr=0.000765, filters=16, dropout=0.1819, l2=0.009733, batch_size=32, val_accuracy=0.9877
+13. lr=0.001496, filters=32, dropout=0.0573, l2=0.001430, batch_size=32, val_accuracy=0.9881
+14. lr=0.002551, filters=32, dropout=0.3290, l2=0.007001, batch_size=128, val_accuracy=0.9894
+15. lr=0.000402, filters=64, dropout=0.2553, l2=0.006695, batch_size=64, val_accuracy=0.9876
+16. lr=0.005047, filters=16, dropout=0.3185, l2=0.001739, batch_size=32, val_accuracy=0.9857
+17. lr=0.000712, filters=16, dropout=0.1453, l2=0.002666, batch_size=32, val_accuracy=0.9906
+18. lr=0.008599, filters=64, dropout=0.2808, l2=0.007668, batch_size=128, val_accuracy=0.9825
+19. lr=0.001260, filters=32, dropout=0.3962, l2=0.008094, batch_size=32, val_accuracy=0.9877
+20. lr=0.001561, filters=16, dropout=0.4336, l2=0.000243, batch_size=128, val_accuracy=0.9910
+21. lr=0.003754, filters=32, dropout=0.1868, l2=0.005639, batch_size=64, val_accuracy=0.9813
+22. lr=0.008217, filters=32, dropout=0.0474, l2=0.004231, batch_size=64, val_accuracy=0.9810
+23. lr=0.007468, filters=16, dropout=0.4413, l2=0.009455, batch_size=32, val_accuracy=0.9716
+24. lr=0.005987, filters=16, dropout=0.2268, l2=0.006442, batch_size=128, val_accuracy=0.9834
+25. lr=0.003083, filters=64, dropout=0.1871, l2=0.005352, batch_size=128, val_accuracy=0.9883
+26. lr=0.007327, filters=16, dropout=0.2961, l2=0.008585, batch_size=64, val_accuracy=0.9814
+27. lr=0.004384, filters=32, dropout=0.1719, l2=0.001071, batch_size=128, val_accuracy=0.9901
+28. lr=0.002731, filters=32, dropout=0.0116, l2=0.008179, batch_size=32, val_accuracy=0.9846
+29. lr=0.001203, filters=16, dropout=0.0394, l2=0.007121, batch_size=128, val_accuracy=0.9882
+30. lr=0.003503, filters=64, dropout=0.4605, l2=0.007211, batch_size=128, val_accuracy=0.9877
+31. lr=0.006317, filters=32, dropout=0.4350, l2=0.006502, batch_size=128, val_accuracy=0.9841
+32. lr=0.007179, filters=16, dropout=0.1845, l2=0.001982, batch_size=128, val_accuracy=0.9863
+33. lr=0.006427, filters=16, dropout=0.2179, l2=0.001434, batch_size=32, val_accuracy=0.9867
+34. lr=0.008340, filters=32, dropout=0.4254, l2=0.002091, batch_size=128, val_accuracy=0.9868
+35. lr=0.005941, filters=64, dropout=0.4830, l2=0.004498, batch_size=32, val_accuracy=0.9775
