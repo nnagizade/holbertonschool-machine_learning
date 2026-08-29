@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Creates, builds, and trains a gensim word2vec model"""
-os = __import__('os')
-sys = __import__('sys')
-
-if os.environ.get('PYTHONHASHSEED') != '0':
-    os.environ['PYTHONHASHSEED'] = '0'
-    os.execv(sys.executable, [sys.executable] + sys.argv)
-
 import gensim
+
+
+def _stable_hash(word):
+    """A deterministic hash function independent of PYTHONHASHSEED"""
+    h = 0
+    for char in word:
+        h = (h * 31 + ord(char)) % (2 ** 32)
+    return h
 
 
 def word2vec_model(sentences, vector_size=100, min_count=5, window=5,
@@ -42,6 +43,7 @@ def word2vec_model(sentences, vector_size=100, min_count=5, window=5,
         sg=sg,
         epochs=epochs,
         seed=seed,
-        workers=workers)
+        workers=workers,
+        hashfxn=_stable_hash)
 
     return model
