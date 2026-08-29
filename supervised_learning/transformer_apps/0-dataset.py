@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Loads and preps a dataset for machine translation"""
-from transformers import AutoTokenizer
+import transformers
 from setup import load_pt2en
 
 
@@ -24,9 +24,9 @@ class Dataset:
         Returns:
             tokenizer_pt, tokenizer_en
         """
-        tokenizer_pt = AutoTokenizer.from_pretrained(
+        tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
             'neuralmind/bert-base-portuguese-cased')
-        tokenizer_en = AutoTokenizer.from_pretrained(
+        tokenizer_en = transformers.AutoTokenizer.from_pretrained(
             'bert-base-uncased')
 
         def pt_sentences():
