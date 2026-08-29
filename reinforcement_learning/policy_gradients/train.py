@@ -15,7 +15,8 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
         gamma: the discount factor
 
     Returns:
-        all values of the score (sum of all rewards during one episode loop)
+        all values of the score (sum of all rewards during one
+        episode loop)
     """
     weight = np.random.rand(4, 2)
     scores = []
@@ -30,7 +31,9 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
         done = False
         while not done:
             action, grad = policy_gradient(state, weight)
-            next_state, reward, terminated, truncated, _ = env.step(action)
+            next_state, reward, terminated, truncated, _ = (
+                env.step(action)
+            )
             done = terminated or truncated
 
             grads.append(grad)
@@ -41,11 +44,12 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
 
         for i in range(len(grads)):
             future_rewards = sum(
-                [r * (gamma ** t) for t, r in enumerate(rewards[i:])]
+                r * (gamma ** t) for t, r in enumerate(rewards[i:])
             )
             weight += alpha * grads[i] * future_rewards
 
         scores.append(score)
-        print("Episode: {} Score: {}".format(episode, score), end="\r", flush=False)
+        msg = "Episode: {} Score: {}".format(episode, score)
+        print(msg)
 
     return scores
