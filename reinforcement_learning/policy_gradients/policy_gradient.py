@@ -31,7 +31,8 @@ def policy_gradient(state, weight):
         the action and the gradient (in this order)
     """
     P = policy(state, weight)
-    action = np.random.choice(len(P[0]), p=P[0])
+    probs = P[0] / P[0].sum()
+    action = np.random.choice(len(probs), p=probs)
 
     s = P.reshape(-1, 1)
     softmax_grad = np.diagflat(s) - np.dot(s, s.T)
