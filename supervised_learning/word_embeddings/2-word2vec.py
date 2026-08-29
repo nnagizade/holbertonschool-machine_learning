@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Creates, builds, and trains a gensim word2vec model"""
-import os
-import sys
+os = __import__('os')
+sys = __import__('sys')
 
 if os.environ.get('PYTHONHASHSEED') != '0':
     os.environ['PYTHONHASHSEED'] = '0'
